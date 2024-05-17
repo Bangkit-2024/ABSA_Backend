@@ -3,3 +3,4 @@ _venv/
 .env
 *.db
 __pycache__/
+*.sqlite3
