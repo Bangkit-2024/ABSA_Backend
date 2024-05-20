@@ -42,7 +42,8 @@ INSTALLED_APPS = [
 
     # Created App
     'api.apps.ApiConfig',
-    'authentication.apps.AuthenticationConfig'
+    'authentication.apps.AuthenticationConfig',
+    'content.apps.ContentConfig',
 ]
 
 MIDDLEWARE = [
