@@ -16,15 +16,23 @@ class Company(BaseModels):
     description = models.CharField(max_length=500)
     user_to_company = models.ManyToManyField(User)
 
+    def __str__(self) -> str:
+        return self.name
+
 class Review(BaseModels):
     review_text = models.CharField(max_length=500)
     review_date = models.DateTimeField(null=True,blank=True)
-    rating = models.PositiveIntegerField()
+    rating = models.PositiveIntegerField(null=True,blank=True)
     company = models.ForeignKey(Company,on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return self.review_text
 
 class Aspect(models.Model):
     name = models.CharField(max_length=20)
- 
+
+    def __str__(self):
+        return self.name
 class ReviewAspectSentiment(BaseModels):
     review = models.ForeignKey(Review,on_delete=models.CASCADE)
     aspect = models.ForeignKey(Aspect,on_delete=models.SET_NULL,null=True)
@@ -33,3 +41,6 @@ class ReviewAspectSentiment(BaseModels):
         (0,"Netral"),
         (1,"Positif")
     ))
+
+    def __str__(self) -> str:
+        return f"{self.review} ({self.aspect}) {self.sentiment}"
