@@ -13,7 +13,7 @@ class BaseModels(models.Model):
 class Company(BaseModels):
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=300)
-    description = models.CharField(max_length=500)
+    description = models.CharField(max_length=1000)
     user_to_company = models.ManyToManyField(User)
 
     def __str__(self) -> str:
@@ -34,7 +34,7 @@ class Aspect(models.Model):
     def __str__(self):
         return self.name
 class ReviewAspectSentiment(BaseModels):
-    review = models.ForeignKey(Review,on_delete=models.CASCADE)
+    review = models.ForeignKey(Review,on_delete=models.CASCADE,related_name="review_aspect")
     aspect = models.ForeignKey(Aspect,on_delete=models.SET_NULL,null=True)
     sentiment = models.IntegerField(choices=(
         (-1,"Negatif"),
