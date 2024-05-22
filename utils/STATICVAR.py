@@ -1,0 +1,1 @@
+SENTIMENT_CODE = {0:"Netral",-1:"Negatif",1:"Positif"}

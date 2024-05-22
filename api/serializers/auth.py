@@ -13,12 +13,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
-    bio = serializers.CharField(source='profile.bio',required=False)
-    photo = serializers.ImageField(source='profile.photo',required=False)
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name','bio','photo')
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True}
@@ -51,7 +49,6 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(TokenObtainPairSerializer):
     def to_representation(self, instance):
         data = super(LoginSerializer, self).to_representation(instance)
-        print(data)
         data.update({'username': self.user.username})
         data.update({'first_name': self.user.first_name})
         data.update({'last_name': self.user.last_name})

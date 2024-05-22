@@ -6,9 +6,11 @@ from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
 from api.viewset.auth import RegisterView, ProfileViewSet
 
 # Ini untuk dataviewset
+from api.viewset.absa import ReviewViewset
 
-
+# Ini Router yang diregister
 router = routers.DefaultRouter()
+router.register(r'review',ReviewViewset,basename='review')
 
 urlpatterns = [
     path('',include(router.urls)),
