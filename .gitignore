@@ -6,3 +6,4 @@ _venv/
 __pycache__/
 *.sqlite3
 _plan/
+credentials.json
