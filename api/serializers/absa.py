@@ -10,6 +10,10 @@ class ReviewAspectBasedSerializer(serializers.ModelSerializer):
         model = ReviewAspectSentiment
         fields = ("id","aspect","sentiment")
     
+    def to_representation(self, instance : ReviewAspectSentiment):
+        rep =  super().to_representation(instance)
+        rep["aspect"] = instance.aspect.name
+        return rep
 
 class ReviewSerializer(serializers.ModelSerializer):
     review_aspect = ReviewAspectBasedSerializer(many=True, read_only=True)
