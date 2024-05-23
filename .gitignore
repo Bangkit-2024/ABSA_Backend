@@ -8,3 +8,4 @@ __pycache__/
 _plan/
 credentials.json
 myenv/
+*.ipynb

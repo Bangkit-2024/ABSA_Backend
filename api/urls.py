@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
 
 # Ini untuk auth viewset
 from api.viewset.auth import RegisterView, ProfileViewSet
+from api.viewset.services import TranslateServicesView
 
 # Ini untuk dataviewset
 from api.viewset.absa import ReviewViewset
@@ -21,4 +22,5 @@ urlpatterns = [
         'delete':'delete_google_link'
     }), name='user_profile'),
     path('auth/register/', RegisterView.as_view(), name='auth_register'),
+    path('service/translate/',TranslateServicesView.as_view(),name='service-translate')
 ]
