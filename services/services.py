@@ -1,4 +1,5 @@
-from services.gcloud.cloud_translation import translate_text_to_languages
+from services.gcloud.cloud_translation import translate_text_to_languages as gcloud_translate
+from services.free.libre_translate import translate_text_to_languages as free_translate
 
 def translate_services(text:str,target:str='id')->str:
     """Translate your text to Bahasa Indonesia
@@ -19,6 +20,9 @@ def translate_services(text:str,target:str='id')->str:
 
     # This is for google translate API
     # We also provide another API services in 'free' section if you want to use
-    return translate_text_to_languages(text,target, simple=True)
+    try:
+        return gcloud_translate(text,target, simple=True)
+    except:
+        return free_translate(text,target)
      
     
