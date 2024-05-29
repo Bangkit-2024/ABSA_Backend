@@ -12,4 +12,3 @@ def translate_text_to_languages(text, target_language:str='id',simple:bool=False
             "translatedText": result["translatedText"],
             "detectedSourceLanguage": result["detectedSourceLanguage"]
         }
-print(translate_text_to_languages("Hola Amigos, Xiao Name is Juan","id"))
