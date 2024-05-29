@@ -15,7 +15,8 @@ DATABASES = {
     }
 }
 
-
+REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"].append('rest_framework.authentication.SessionAuthentication')
+CORS_ALLOW_ALL_ORIGINS=True
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]

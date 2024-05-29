@@ -19,8 +19,8 @@ urlpatterns = [
     path('auth/profile/', ProfileViewSet.as_view({
         'get': 'retrieve',
         'patch':'patch',
-        'delete':'delete_google_link'
     }), name='user_profile'),
     path('auth/register/', RegisterView.as_view(), name='auth_register'),
-    path('service/translate/',TranslateServicesView.as_view(),name='service-translate')
+    path('auth/refresh/',TokenRefreshView.as_view(),name='auth_refresh'),
+    path('service/translate/',TranslateServicesView.as_view(),name='service-translate'),
 ]

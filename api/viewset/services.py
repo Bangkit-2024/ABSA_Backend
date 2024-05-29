@@ -7,7 +7,7 @@ from services.services import translate_services
 class TranslateServicesView(APIView):
 
     target_language = 'id'
-    # permission_classes=[permissions.IsAuthenticated]
+    permission_classes=[permissions.IsAuthenticated]
 
     def post(self,request):
         try:
