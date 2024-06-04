@@ -2,8 +2,10 @@ from absa.settings.common import *
 from utils.environment import load_env, get_env
 import os
 
+DEBUG = False
 SECRET_KEY = os.environ.get("DJANGO_SECRET")
 STATIC_ROOT = BASE_DIR / 'static'
+ALLOWED_HOSTS = ['*']
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 DATABASES = {
     'default': {
@@ -15,3 +17,4 @@ DATABASES = {
         'PORT':'3306',
     }
 }
+CORS_ALLOW_ALL_ORIGINS=True

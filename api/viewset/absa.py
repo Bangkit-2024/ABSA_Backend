@@ -14,6 +14,9 @@ from content.models import Review
 from api.serializers.absa import ReviewSerializer
 from api.serializers.uploads import UploadReviewsSerializer
 
+# Other
+from services.absa.setfit_predict import predict_data
+
 class ReviewViewset(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = [permissions.IsAuthenticated, IsNotEditable]
@@ -37,3 +40,11 @@ class ReviewViewset(viewsets.ModelViewSet):
             return response.Response({"message":"Data Berhasil Di Upload"},status=status.HTTP_201_CREATED)
         
         return response.Response({"message":"Terjadi Kesalahan","error":file.error_messages},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @action(methods=["POST"],detail=False)
+    def predict(self,request):
+
+        text_predict = request.data['text']
+
+        return response.Response(predict_data(text_predict),status=status.HTTP_201_CREATED)
+
