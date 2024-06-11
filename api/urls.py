@@ -20,6 +20,9 @@ urlpatterns = [
         'get': 'retrieve',
         'patch':'patch',
     }), name='user_profile'),
+    path("auth/delete_photo/", ProfileViewSet.as_view({
+        'post':'delete_photo'
+    }), name='user_photo_delete'),
     path('auth/register/', RegisterView.as_view(), name='auth_register'),
     path('auth/refresh/',TokenRefreshView.as_view(),name='auth_refresh'),
     path('service/translate/',TranslateServicesView.as_view(),name='service-translate'),

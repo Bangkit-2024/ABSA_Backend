@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+from django.conf import settings
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -64,7 +65,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        exclude = ("user","id")
+        fields = ("first_name","last_name","email","username","user_id","bio","phone","created_date","photo")
 
     def update(self, instance:Profile, validated_data):
         user_data = validated_data.get("user")
@@ -75,6 +76,15 @@ class ProfileSerializer(serializers.ModelSerializer):
             user.last_name = user_data.get("last_name", instance.user.last_name)
             user.username = user_data.get("username", instance.user.username)
             user.save()
+        instance.bio = validated_data.get("bio",instance.bio)
+        instance.phone = validated_data.get("phone",instance.phone)
+        instance.photo = validated_data.get("photo",instance.photo)
+        
         instance.save()
 
         return Profile.objects.filter(user=user).first()
+
+    def to_representation(self, instance):
+        rep = super(ProfileSerializer,self).to_representation(instance)
+        rep['photo'] = f"{settings.MEDIA_URL}{instance.photo}" if instance.photo else None
+        return rep

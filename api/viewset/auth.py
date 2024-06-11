@@ -1,8 +1,10 @@
 # Disini untuk depedency
 from rest_framework import generics, mixins,viewsets, response, status
+from rest_framework.decorators import action
 from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
+import os
 
 
 # Disini untuk serializer
@@ -49,3 +51,14 @@ class ProfileViewSet(mixins.ListModelMixin,
         return response.Response(ProfileSerializer(
             Profile.objects.filter(user=self.request.user).first()).data,
                                  status=status.HTTP_200_OK)
+
+    @action(methods=["POST"], detail=False)
+    def delete_photo(self, request, *args, **kwargs):
+        instance = Profile.objects.filter(user=self.request.user).first()
+        if instance.photo:
+            if os.path.isfile(instance.photo.path):
+                os.remove(instance.photo.path)
+                instance.photo = None
+                instance.save()
+                return response.Response(self.get_serializer(instance).data, status=status.HTTP_200_OK)
+        return response.Response({"message": "Tidak Ada File Profile"}, status=status.HTTP_400_BAD_REQUEST)
