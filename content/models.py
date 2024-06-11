@@ -14,7 +14,6 @@ class Company(BaseModels):
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=300)
     description = models.CharField(max_length=1000)
-    user_to_company = models.ManyToManyField(User)
 
     def __str__(self) -> str:
         return self.name

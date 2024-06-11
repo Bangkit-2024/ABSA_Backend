@@ -8,7 +8,7 @@ import pandas as pd
 from api.permissions import IsNotEditable
 
 # Models
-from content.models import Review
+from content.models import Review, Company
 
 # Serializer
 from api.serializers.absa import ReviewSerializer
@@ -25,8 +25,10 @@ class ReviewViewset(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsNotEditable]
     
     def get_queryset(self):
-        
-        return Review.objects.filter(company__user_to_company=self.request.user).all()
+        try:
+            return Review.objects.filter(company=self.request.user.profile.company).all()
+        except:
+            return []
     
 
     @action(methods=['POST'],detail=False)
@@ -45,14 +47,18 @@ class ReviewViewset(viewsets.ModelViewSet):
                     df = pd.read_excel(file_obj)
 
                 else:
-                    raise ValueError("Format file is not correct")          
-                # Check Content
-                if not is_content_valid(df,request.data['is_ignored']):
+                    raise ValueError("Format file is not correct")    
+
+                df['company'] = request.user.profile.company.id
+                # Check Content (is_ignored=False, more strict about data, it will only give true if data is not empty)
+                if not is_content_valid(df,request.data.get('is_ignored',False)):
                     raise ValueError("Content is not correct please read instruction")
                 
                 if is_header_include_absa(df):
                     handle_bulk_aspect_based_review(df)
+
                 else:
+                    
                     handle_bulk_review_only(df)
 
                 

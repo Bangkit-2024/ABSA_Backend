@@ -37,4 +37,3 @@ def predict_services(text):
     print(lstm_result)
 
     return {"span":setfit_result,"absa":lstm_result}
-    

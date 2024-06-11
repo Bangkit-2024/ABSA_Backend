@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from content.models import Company
 from django.dispatch import receiver
 import uuid
 import os
@@ -17,6 +18,7 @@ class Profile(models.Model):
                               null=True, blank=True)
     phone = models.TextField(max_length=16)
     created_date = models.DateTimeField(auto_now_add=True,editable=False)
+    company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return "Profile User : "+self.user.username
