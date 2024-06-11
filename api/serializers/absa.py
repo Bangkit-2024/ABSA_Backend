@@ -12,7 +12,6 @@ class ReviewAspectBasedSerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance : ReviewAspectSentiment):
         rep =  super().to_representation(instance)
-        rep["aspect"] = instance.aspect.name
         return rep
 
 class ReviewSerializer(serializers.ModelSerializer):

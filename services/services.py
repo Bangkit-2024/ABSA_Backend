@@ -1,6 +1,6 @@
 from services.gcloud.cloud_translation import translate_text_to_languages as gcloud_translate
 from services.free.libre_translate import translate_text_to_languages as free_translate
-from services.absa.load_model import LoadAbsaModel, LoadLSTMModel
+# from services.absa.load_model import LoadAbsaModel, LoadLSTMModel
 
 def translate_services(text:str,target:str='id')->str:
     """Translate your text to Bahasa Indonesia
@@ -28,8 +28,8 @@ def translate_services(text:str,target:str='id')->str:
 
 def predict_services(text):
 
-    absa_model = LoadAbsaModel() 
-    ltsm_model = LoadLSTMModel()
+    # absa_model = LoadAbsaModel() 
+    # ltsm_model = LoadLSTMModel()
     
     setfit_result = absa_model.model(text)
     lstm_result = ltsm_model.predict(text,setfit_result)

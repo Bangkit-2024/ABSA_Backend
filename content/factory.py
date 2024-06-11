@@ -2,7 +2,7 @@ import factory
 from django.contrib.auth.models import User
 import factory.fuzzy
 from random import choice
-from .models import Company, Review, ReviewAspectSentiment, Aspect
+from .models import Company, Review, ReviewAspectSentiment
 
 class CompanyFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -42,12 +42,7 @@ class ReviewAspectSentimentFactory(factory.django.DjangoModelFactory):
         model = ReviewAspectSentiment
     
     sentiment = factory.fuzzy.FuzzyInteger(-1,1)
-
-    @factory.lazy_attribute
-    def aspect(self):
-        aspects = Aspect.objects.all()
-        if Aspect.objects.exists():
-            return choice(aspects)
+    aspect = factory.fuzzy.FuzzyChoice(["rasa","tempat","harga","pelayanan"])
         
     @factory.lazy_attribute
     def review(self):

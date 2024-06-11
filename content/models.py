@@ -28,19 +28,17 @@ class Review(BaseModels):
     def __str__(self) -> str:
         return self.review_text
 
-class Aspect(models.Model):
-    name = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.name
 class ReviewAspectSentiment(BaseModels):
     review = models.ForeignKey(Review,on_delete=models.CASCADE,related_name="review_aspect")
-    aspect = models.ForeignKey(Aspect,on_delete=models.SET_NULL,null=True)
+    aspect = models.CharField(max_length=50,choices=(
+        ["rasa","rasa"],["tempat","tempat"],["harga","harga"],["pelayanan","pelayanan"]
+    ),null=True)
     sentiment = models.IntegerField(choices=(
         (-1,"Negatif"),
         (0,"Netral"),
         (1,"Positif")
     ))
+    is_manual = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"{self.review} ({self.aspect}) {self.sentiment}"
