@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from services.absa.load_model import LoadAbsaModel, LoadLSTMModel
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/v1/",include('api.urls')),
 ]
+
+LoadAbsaModel() 
+LoadLSTMModel()   
