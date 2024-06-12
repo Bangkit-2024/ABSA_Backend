@@ -16,7 +16,7 @@ from api.serializers.absa import ReviewSerializer
 from api.serializers.uploads import UploadReviewsSerializer
 
 # Other
-from services.services import predict_services, sentiment_output_converter
+from services.services import predict_services, sentiment_output_converter, translate_services
 from services.upload.handle_upload import (
     handle_bulk_aspect_based_review, is_content_valid, 
     handle_bulk_review_only, is_header_include_absa)
@@ -75,7 +75,7 @@ class ReviewViewset(viewsets.ModelViewSet):
     def predict(self,request):
 
         text_predict = request.data.get('text')
-        predict = predict_services(text_predict)
+        predict = predict_services(translate_services(text_predict))
 
         if not text_predict:
             return response.Response({"message":f"Text column should be exist"},status=status.HTTP_400_BAD_REQUEST)
@@ -101,7 +101,7 @@ class ReviewViewset(viewsets.ModelViewSet):
         with transaction.atomic():
             for review_item in review_target:
                 try:
-                    predict = predict_services(review_item.review_text)
+                    predict = predict_services(translate_services(review_item.review_text))
                     span = predict['span']
                     absa = predict['absa']
 
