@@ -26,6 +26,17 @@ def translate_services(text:str,target:str='id')->str:
     except:
         return free_translate(text,target)
 
+def sentiment_output_converter(sentiment:str)->int:
+
+    if(sentiment=="positif"):
+        return 1
+    
+    if(sentiment=="negatif"):
+        return -1
+    
+    return 0
+        
+
 def predict_services(text):
 
     # absa_model = LoadAbsaModel() 
