@@ -2,7 +2,7 @@
 
 from rest_framework import viewsets, permissions, response, status
 from rest_framework.decorators import action
-from django.db import transaction
+from django.db import transaction, models
 import pandas as pd
 
 # Custom Permission
@@ -75,7 +75,7 @@ class ReviewViewset(viewsets.ModelViewSet):
     def predict(self,request):
 
         text_predict = request.data.get('text')
-        predict = predict_services(translate_services(text_predict))
+        predict = predict_services(text_predict)
 
         if not text_predict:
             return response.Response({"message":f"Text column should be exist"},status=status.HTTP_400_BAD_REQUEST)
@@ -86,6 +86,47 @@ class ReviewViewset(viewsets.ModelViewSet):
         
         except Exception as error:
             return response.Response({"message":f"There is Some Error {error}"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @action(methods=["POST"])
+    def save_predict(self,request):
+
+        comment = request.data.get("reviews")
+        aspect_list = request.data.get("aspects")
+        sentiment_list = request.data.get("sentiments")
+
+        if (not aspect_list and not sentiment_list and not comment):
+            return response.Response({"message":"Input is not correct"},status=status.HTTP_400_BAD_REQUEST)
+        
+        aspect_list = aspect_list.split(",")
+        sentiment_list = sentiment_list.split(",")
+
+        if (len(aspect_list)!=len(sentiment_list)):
+            return response.Response({"message":"Input is not correct","error":"Sentiment List Should equal Aspect List"},status=status.HTTP_400_BAD_REQUEST)
+
+        
+        with transaction.atomic():
+            try:
+                review = Review(review_text=comment,company=request.user.profile.company)
+                review.save()
+                for aspect,sentiment in zip(aspect_list,sentiment_list):
+
+                    if(str(sentiment) not in ['0','-1','1']):
+                        return response.Response({"message":"Input is not correct","error":"Sentiment should be number from (-1,0,1) "},status=status.HTTP_400_BAD_REQUEST)
+ 
+
+                    r= RealReviewAspectSentiment(
+                        review = review,
+                        aspect=aspect,
+                        sentiment=sentiment
+                    )
+
+                    r.save()
+
+                return response.Response(ReviewSerializer(data=review).data,status=status.HTTP_200_OK)
+            except Exception as error:
+                print(error)
+                return response.Response({"message":"Input is not correct"},status=status.HTTP_400_BAD_REQUEST)
+
 
     @action(methods=["POST"],detail=False)
     def bulk_predict(self,request):
@@ -96,14 +137,20 @@ class ReviewViewset(viewsets.ModelViewSet):
 
         user_company = self.request.user.profile.company
         user_review = PredictedReviewAspectSentiment.objects.filter(review__company=user_company).all()
-        review_target : list[Review] = Review.objects.filter(company=user_company).filter(is_predict_fail=False).all()
+        review_target : list[Review] = Review.objects.filter(
+            company=user_company).filter(is_predict_fail=False).filter(
+                ~models.Q(id__in=user_review)
+            ).all()
 
         with transaction.atomic():
             for review_item in review_target:
                 try:
-                    predict = predict_services(translate_services(review_item.review_text))
+                    predict = predict_services(review_item.review_text)
                     span = predict['span']
                     absa = predict['absa']
+
+                    if(len(span[0])==0):
+                        raise ValueError("Prediction Failed")
 
                     for s,a in zip(span,absa):
                         pred = PredictedReviewAspectSentiment(
@@ -172,7 +219,7 @@ class ReviewViewset(viewsets.ModelViewSet):
 
                     r.save()
 
-                return response.Response({"message":"Success"},status=status.HTTP_200_OK)
+                return response.Response(ReviewSerializer(data=review).data,status=status.HTTP_200_OK)
             except Exception as error:
                 print(error)
                 return response.Response({"message":"Input is not correct"},status=status.HTTP_400_BAD_REQUEST)
