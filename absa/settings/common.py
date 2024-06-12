@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from utils.environment import load_env, load_gcloud_env
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'whitenoise',
     "corsheaders",
+    "django_rest_passwordreset",
 
     # Created App
     'api.apps.ApiConfig',
@@ -64,7 +66,7 @@ ROOT_URLCONF = 'absa.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR, 'templates/',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,3 +137,11 @@ REST_FRAMEWORK = {
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR/ 'media'
+
+EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
+
+EMAIL_PORT = os.environ.get("EMAIL_PORT")# Replace with your email port
+EMAIL_USE_TLS = True 
+EMAIL_HOST = os.environ.get("EMAIL_HOST")  # Replace with your email host for gmail -> 'smtp.gmail.com'
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")

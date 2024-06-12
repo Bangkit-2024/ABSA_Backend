@@ -88,3 +88,10 @@ class ProfileSerializer(serializers.ModelSerializer):
         rep = super(ProfileSerializer,self).to_representation(instance)
         rep['photo'] = f"{settings.MEDIA_URL}{instance.photo}" if instance.photo else None
         return rep
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+class ResetPasswordEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
