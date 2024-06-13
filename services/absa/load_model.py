@@ -29,8 +29,8 @@ class LoadAbsaModel:
         if cls._instance is None:
             cls._instance = super(LoadAbsaModel, cls).__new__(cls)
             cls._instance.model = AbsaModel.from_pretrained(
-    "services/absa/model/absa2-aspect",
-    "services/absa/model/absa2-polarity",
+    "services/absa/model/large_model/absa2-aspect",
+    "services/absa/model/large_model/absa2-polarity",
     spacy_model="id_core_news_trf"
     )
         return cls._instance
