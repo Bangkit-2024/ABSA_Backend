@@ -3,14 +3,15 @@ import numpy as np
 import re
 import emoji
 import unicodedata
-from services.services import translate_services
+from services.free.libre_translate import translate_text_to_languages as free_translate
+from services.gcloud.cloud_translation import translate_text_to_languages as gcloud_translate
 import multiprocessing
 from utils.STATICVAR import PROCESS_TIMEOUT
 
 
 class PreprocessData:
     def __init__(self,timeout=PROCESS_TIMEOUT):
-        self.timeout = PROCESS_TIMEOUT
+        self.timeout = timeout
         # Load the CSV file into a DataFrame
         df_kamusalay = pd.read_csv('services/absa/model/new_kamusalay.csv', encoding='latin1')
         self.word_map = dict(zip(df_kamusalay.iloc[0], df_kamusalay.iloc[1]))
@@ -28,9 +29,15 @@ class PreprocessData:
             'layanan': 'pelayanan'
         }
 
-    def _worker_function(input_str, queue):
+    def _translate(self,text,target='id'):
         try:
-            result = translate_services(input_str)
+            return gcloud_translate(text,target, simple=True)
+        except:
+            return free_translate(text,target)
+        
+    def _worker_function(self,input_str, queue):
+        try:
+            result = self._translate(input_str)
             queue.put(result)
         except Exception as e:
             queue.put(input_str)

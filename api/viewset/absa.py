@@ -95,7 +95,7 @@ class ReviewViewset(viewsets.ModelViewSet):
         aspect_list = request.data.get("aspects")
         sentiment_list = request.data.get("sentiments")
 
-        if (not aspect_list and not sentiment_list and not comment):
+        if ((not aspect_list) or (not sentiment_list) or (not comment)):
             return response.Response({"message":"Input is not correct"},status=status.HTTP_400_BAD_REQUEST)
         
         aspect_list = aspect_list.split(",")
@@ -121,9 +121,8 @@ class ReviewViewset(viewsets.ModelViewSet):
                         sentiment=sentiment
                     )
 
-                    r.save()
-
-                return response.Response(ReviewSerializer(data=review).data,status=status.HTTP_200_OK)
+                    r.save()                
+                return response.Response(ReviewSerializer(review).data,status=status.HTTP_200_OK)
             except Exception as error:
                 print(error)
                 return response.Response({"message":"Input is not correct"},status=status.HTTP_400_BAD_REQUEST)
@@ -140,9 +139,9 @@ class ReviewViewset(viewsets.ModelViewSet):
         user_review = PredictedReviewAspectSentiment.objects.filter(review__company=user_company).all()
         review_target : list[Review] = Review.objects.filter(
             company=user_company).filter(is_predict_fail=False).filter(
-                ~models.Q(id__in=user_review)
+                ~models.Q(id__in=[u.pk for u in user_review])
             ).all()
-
+        print(review_target)
         with transaction.atomic():
             for review_item in review_target:
                 try:
@@ -150,7 +149,7 @@ class ReviewViewset(viewsets.ModelViewSet):
                     span = predict['span']
                     absa = predict['absa']
 
-                    if(len(span[0])==0):
+                    if not (len(span[0])):
                         raise ValueError("Prediction Failed")
 
                     for s,a in zip(span,absa):
@@ -220,7 +219,7 @@ class ReviewViewset(viewsets.ModelViewSet):
 
                     r.save()
 
-                return response.Response(ReviewSerializer(data=review).data,status=status.HTTP_200_OK)
+                return response.Response(ReviewSerializer(review).data,status=status.HTTP_200_OK)
             except Exception as error:
                 print(error)
                 return response.Response({"message":"Input is not correct"},status=status.HTTP_400_BAD_REQUEST)

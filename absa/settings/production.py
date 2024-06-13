@@ -1,7 +1,19 @@
 from absa.settings.common import *
 import os
+
 DEBUG = False
-ALLOWED_HOSTS = ['*']
 SECRET_KEY = os.environ.get("DJANGO_SECRET")
 STATIC_ROOT = BASE_DIR / 'static'
+ALLOWED_HOSTS = ['*']
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get("DB_NAME"),
+        'USER': os.environ.get("DB_USERNAME"),
+        'PASSWORD': os.environ.get("DB_PASSWORD"),
+        'HOST':os.environ.get("DB_HOST"),
+        'PORT':'3306',
+    }
+}
+CORS_ALLOW_ALL_ORIGINS=True

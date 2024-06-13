@@ -5,7 +5,7 @@ FROM python:3.11
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-ENV STAGE STAGING
+ENV STAGE DEV
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -16,6 +16,8 @@ COPY requirements.txt /app/
 COPY . .
 
 # Install the dependencies specified in the requirements.txt file
+RUN pip install huggingface_hub
+RUN pip install tensorflow==2.15.0
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code to the working directory
