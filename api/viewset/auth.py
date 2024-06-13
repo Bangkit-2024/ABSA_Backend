@@ -1,12 +1,16 @@
 # Disini untuk depedency
 from rest_framework import generics, mixins,viewsets, response, status
+from rest_framework.decorators import action
+from rest_framework.views import APIView
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
+import os
 
 
 # Disini untuk serializer
-from api.serializers.auth import UserSerializer, LoginSerializer, ProfileSerializer
+from api.serializers.auth import UserSerializer, LoginSerializer, ProfileSerializer, ChangePasswordSerializer
 
 # Disini untuk models
 from authentication.models import Profile
@@ -49,3 +53,36 @@ class ProfileViewSet(mixins.ListModelMixin,
         return response.Response(ProfileSerializer(
             Profile.objects.filter(user=self.request.user).first()).data,
                                  status=status.HTTP_200_OK)
+
+    @action(methods=["POST"], detail=False)
+    def delete_photo(self, request, *args, **kwargs):
+        instance = Profile.objects.filter(user=self.request.user).first()
+        if instance.photo:
+            if os.path.isfile(instance.photo.path):
+                os.remove(instance.photo.path)
+                instance.photo = None
+                instance.save()
+                return response.Response(self.get_serializer(instance).data, status=status.HTTP_200_OK)
+        return response.Response({"message": "Tidak Ada File Profile"}, status=status.HTTP_400_BAD_REQUEST)
+
+class ChangePassowrdView(APIView):
+
+    serializer_class = ChangePasswordSerializer
+    permission_classes=[IsAuthenticated]
+
+    def post(self,request):
+
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            user :User= request.user
+
+            if user.check_password(serializer.validated_data.get('old_password')):
+                user.set_password(serializer.validated_data.get('new_password'))
+                user.save()
+                update_session_auth_hash(request,user)
+                return response.Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+            
+            return response.Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

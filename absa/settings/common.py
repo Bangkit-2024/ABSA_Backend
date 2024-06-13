@@ -11,21 +11,22 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from utils.environment import load_env, load_gcloud_env
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_gcloud_env()
+load_env()
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4bmcqe^5le)#7^$o22ncyyupozkb)ai+gsj^e5dyx)r=f*1yi%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'whitenoise',
+    "corsheaders",
+    "django_rest_passwordreset",
 
     # Created App
     'api.apps.ApiConfig',
@@ -50,6 +53,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -62,7 +66,7 @@ ROOT_URLCONF = 'absa.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR, 'templates/',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,15 +82,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'absa.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation
@@ -130,6 +126,22 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# TODO:Separate This in next patch to dev, staging, and deploy environment
-STATIC_ROOT = BASE_DIR / 'static'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+REST_FRAMEWORK = {
+    
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
+
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR/ 'media'
+
+EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
+
+EMAIL_PORT = os.environ.get("EMAIL_PORT")# Replace with your email port
+EMAIL_USE_TLS = True 
+EMAIL_HOST = os.environ.get("EMAIL_HOST")  # Replace with your email host for gmail -> 'smtp.gmail.com'
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")

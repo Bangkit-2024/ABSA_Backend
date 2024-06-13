@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+from django.conf import settings
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -13,12 +14,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
-    bio = serializers.CharField(source='profile.bio',required=False)
-    photo = serializers.ImageField(source='profile.photo',required=False)
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name','bio','photo')
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True}
@@ -51,7 +50,6 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(TokenObtainPairSerializer):
     def to_representation(self, instance):
         data = super(LoginSerializer, self).to_representation(instance)
-        print(data)
         data.update({'username': self.user.username})
         data.update({'first_name': self.user.first_name})
         data.update({'last_name': self.user.last_name})
@@ -67,7 +65,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        exclude = ("user","id")
+        fields = ("first_name","last_name","email","username","user_id","bio","phone","created_date","photo")
 
     def update(self, instance:Profile, validated_data):
         user_data = validated_data.get("user")
@@ -78,6 +76,22 @@ class ProfileSerializer(serializers.ModelSerializer):
             user.last_name = user_data.get("last_name", instance.user.last_name)
             user.username = user_data.get("username", instance.user.username)
             user.save()
+        instance.bio = validated_data.get("bio",instance.bio)
+        instance.phone = validated_data.get("phone",instance.phone)
+        instance.photo = validated_data.get("photo",instance.photo)
+        
         instance.save()
 
         return Profile.objects.filter(user=user).first()
+
+    def to_representation(self, instance):
+        rep = super(ProfileSerializer,self).to_representation(instance)
+        rep['photo'] = f"{settings.MEDIA_URL}{instance.photo}" if instance.photo else None
+        return rep
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+class ResetPasswordEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)

@@ -13,3 +13,10 @@ Instalation Guides
 3. python manage.py startapp
 
 ```
+---
+
+## Environtment
+
+> There are 3 env that being used here (development, staging, and production)
+
+By default it being set in development enviroment. To change it you could change it by setting the enviroment to STAGE or PROD

@@ -1,7 +1,13 @@
 _venv/
 .vscode/
 .env
+*.env
 *.db
 __pycache__/
 *.sqlite3
 _plan/
+credentials.json
+myenv/
+services/absa/model
+*.ipynb
+*.pt
