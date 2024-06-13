@@ -6,3 +6,4 @@ LANGUAGE_MAP = {
     "en": "English"
     # Tambahkan bahasa lain jika diperlukan
 }
+PROCESS_TIMEOUT=5

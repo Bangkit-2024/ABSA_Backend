@@ -75,6 +75,7 @@ class ReviewViewset(viewsets.ModelViewSet):
     def predict(self,request):
 
         text_predict = request.data.get('text')
+        
         predict = predict_services(text_predict)
 
         if not text_predict:
@@ -87,7 +88,7 @@ class ReviewViewset(viewsets.ModelViewSet):
         except Exception as error:
             return response.Response({"message":f"There is Some Error {error}"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    @action(methods=["POST"])
+    @action(methods=["POST"],detail=False)
     def save_predict(self,request):
 
         comment = request.data.get("reviews")

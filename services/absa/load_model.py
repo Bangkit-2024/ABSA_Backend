@@ -1,5 +1,6 @@
 from setfit import AbsaModel
 from services.absa.ltsm_predict import LSTMModel
+from services.absa.preprocess import PreprocessData
 
 class Singleton(type):
     """
@@ -33,8 +34,7 @@ class LoadAbsaModel:
     spacy_model="id_core_news_trf"
     )
         return cls._instance
-    
-    
+       
 class LoadLSTMModel(metaclass=Singleton):
 
     def __init__(self):
@@ -42,6 +42,13 @@ class LoadLSTMModel(metaclass=Singleton):
         
     def predict(self,text,preds):
         return self.model.predict_text(text,[preds])
-    
+
+class Preprocess(metaclass=Singleton):
+
+    def __init__(self):
+        self.model = PreprocessData()
+        
+    def preprocess(self,text):
+        return self.model.preprocess_text(text)
 
     
