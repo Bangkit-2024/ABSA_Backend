@@ -3,9 +3,10 @@ import torch
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 import tensorflow as tf
+from utils.STATICVAR import APP_DIR
 
 class LSTMModel:
-    def __init__(self, model_name='services/absa/model/large_model/indobert-base-p1', max_length=128, lstm_model_path='services/absa/model/bilstm_aspect_model.h5'):
+    def __init__(self, model_name=APP_DIR+"services/absa/model/large_model/indobert-base-p1", max_length=128, lstm_model_path=APP_DIR+'services/absa/model/bilstm_aspect_model.h5'):
         self.tokenizer = BertTokenizer.from_pretrained(model_name)
         self.model = BertModel.from_pretrained(model_name)
         self.max_length = max_length

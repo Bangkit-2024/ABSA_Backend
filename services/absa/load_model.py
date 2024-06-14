@@ -1,6 +1,9 @@
 from setfit import AbsaModel
 from services.absa.ltsm_predict import LSTMModel
 from services.absa.preprocess import PreprocessData
+from django.conf import settings
+from utils.STATICVAR import APP_DIR
+
 
 class Singleton(type):
     """
@@ -29,8 +32,8 @@ class LoadAbsaModel:
         if cls._instance is None:
             cls._instance = super(LoadAbsaModel, cls).__new__(cls)
             cls._instance.model = AbsaModel.from_pretrained(
-    "services/absa/model/large_model/absa2-aspect",
-    "services/absa/model/large_model/absa2-polarity",
+        APP_DIR+"services/absa/model/large_model/absa-aspect",
+        APP_DIR+"services/absa/model/large_model/absa-polarity",
     spacy_model="id_core_news_trf"
     )
         return cls._instance

@@ -149,6 +149,7 @@ class ReviewViewset(viewsets.ModelViewSet):
                     span = predict['span']
                     absa = predict['absa']
 
+                    print(span)
                     if not (len(span[0])):
                         raise ValueError("Prediction Failed")
 
@@ -163,8 +164,8 @@ class ReviewViewset(viewsets.ModelViewSet):
 
                     SUCCESS+=1
                 except Exception as error:
-                    # review_item.is_predict_fail = True
-                    # review_item.save()
+                    review_item.is_predict_fail = True
+                    review_item.save()
                     errors.append(str(error))
                     FAILED_COUNT+=1
 

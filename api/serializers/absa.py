@@ -29,7 +29,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     real_review_aspect = RealReviewAspectBasedSerializer(many=True, read_only=True)
     class Meta:
         model = Review
-        fields = ("id","review_text","company","company_id","review_aspect","real_review_aspect")
+        fields = ("id","review_text","company","company_id","review_aspect","real_review_aspect","is_predict_fail")
     
     def to_representation(self, instance : Review):
         rep =  super().to_representation(instance)
