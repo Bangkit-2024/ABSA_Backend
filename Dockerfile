@@ -5,7 +5,7 @@ FROM python:3.11
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-ENV STAGE DEV
+ENV STAGE PROD
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -21,12 +21,18 @@ RUN pip install tensorflow==2.15.0
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code to the working directory
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+RUN apt install git-lfs
+RUN git clone https://huggingface.co/kaylaisya/absa-polarity /app/services/absa/model/large_model/absa-polarity
+RUN git clone https://huggingface.co/kaylaisya/absa-aspect /app/services/absa/model/large_model/absa-aspect
+RUN git clone https://huggingface.co/indobenchmark/indobert-base-p1 /app/services/absa/model/large_model/indobert-base-p1
+RUN ls -a
 
-RUN python manage.py makemigrations
-RUN python manage.py migrate
 
 # Expose port 8000 to the outside world
 EXPOSE 8000
 
+# CMD ["python","manage.py","makemigrations"]
+# CMD ["python","manage.py","migrate"]
 # Set the default command to run the Django application using gunicorn
-CMD ["gunicorn", "--workers", "3", "--bind", "0.0.0.0:8000", "absa.wsgi:application"]
+CMD pyhton manage.py runserver

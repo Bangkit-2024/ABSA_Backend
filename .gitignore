@@ -8,6 +8,6 @@ __pycache__/
 _plan/
 credentials.json
 myenv/
-services/absa/model
+services/absa/model/large_model/
 *.ipynb
 *.pt

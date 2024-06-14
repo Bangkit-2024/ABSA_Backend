@@ -39,6 +39,7 @@ def sentiment_output_converter(sentiment:str)->int:
 
 def predict_services(text):
     
+    print("Predict ",text)
     preprocess = PreprocessData()
     absa_model = LoadAbsaModel() 
     ltsm_model = LoadLSTMModel()
